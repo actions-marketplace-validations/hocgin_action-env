@@ -5,24 +5,21 @@ on:
       - master
       - main
 jobs:
-  semantic-release:
-    name: Create
+  release:
+    name: release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: Install node modules
-        run: |-
-          npm install -g semantic-release \
-            @semantic-release/commit-analyzer \
-            @semantic-release/exec \
-            @semantic-release/git \
-            @semantic-release/release-notes-generator
-      - name: Release
+      - run: npm run build
+      - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+      - run: >-
+          git push
+          https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          HEAD:refs/heads/v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
