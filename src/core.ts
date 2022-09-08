@@ -23,6 +23,7 @@ export async function run() {
     // const octokit = getOctokit(process.env.GITHUB_TOKEN!, {});
 
     let context = github.context;
+    console.log('日志信息')
     console.log('context', JSON.stringify(context));
     let eventName = context.eventName;
     let payload = context.payload;
