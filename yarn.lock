@@ -1484,6 +1484,11 @@
     "@octokit/openapi-types" "^3.3.0"
     "@types/node" ">= 8"
 
+"@octokit/webhooks-definitions@^3.67.3":
+  version "3.67.3"
+  resolved "https://registry.npmjs.org/@octokit/webhooks-definitions/-/webhooks-definitions-3.67.3.tgz#d2a905a90b04af8111982d0c13658a49fc4eecb9"
+  integrity sha512-do4Z1r2OVhuI0ihJhQ8Hg+yPWnBYEBNuFNCrvtPKoYT1w81jD7pBXgGe86lYuuNirkDHb0Nxt+zt4O5GiFJfgA==
+
 "@sinclair/typebox@^0.24.1":
   version "0.24.38"
   resolved "https://registry.npmjs.org/@sinclair/typebox/-/typebox-0.24.38.tgz#7f68d9c5775c4c2cec0524b3b990263dd009c968"

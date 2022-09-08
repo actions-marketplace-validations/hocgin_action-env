@@ -5,16 +5,22 @@ description: '项目环境判定'
 outputs:
   env:
     description: '最终环境: dev/test/rls/prod/unknown'
-  branch_name:
-    description: '发起的分支: master/..'
-  tags:
-    description: '标签: []'
+  source_branch:
+    description: '发起的分支: feature-xx'
+  target_branch:
+    description: '目标的分支: master'
+  tag:
+    description: '标签: v1.0.0'
   version:
-    description: '版本: sha-${GITHUB_SHA::8}'
+    description: '版本: v1.0.0'
+  name:
+    description: '名称: sha-${GITHUB_SHA::8}'
   event_name:
     description: '触发事件: schedule/'
-  created:
+  created_at:
     description: '执行时间'
+  sender:
+    description: '操作人: hocgin'
 runs:
   using: node12
   main: dist/index.js
