@@ -1,0 +1,20 @@
+name: 'action-env'
+author: 'hocgin'
+description: '项目环境判定'
+#inputs:
+outputs:
+  env:
+    description: '最终环境: dev/test/rls/prod/unknown'
+  branch_name:
+    description: '发起的分支: master/..'
+  tags:
+    description: '标签: []'
+  version:
+    description: '版本: sha-${GITHUB_SHA::8}'
+  event_name:
+    description: '触发事件: schedule/'
+  created:
+    description: '执行时间'
+runs:
+  using: node12
+  main: dist/index.js
