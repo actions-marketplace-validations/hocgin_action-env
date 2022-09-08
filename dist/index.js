@@ -629,29 +629,102 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
 const core_1 = __importDefault(__webpack_require__(470));
-const github_1 = __webpack_require__(469);
-const OUTPUT = {
-    ENV: "env",
-    BRANCH_NAME: "branch_name",
-    TAGS: "tags",
-    VERSION: "version",
-    EVENT_NAME: "event_name",
-    CREATED: "created",
-};
+const github_1 = __importDefault(__webpack_require__(469));
+var OUTPUT;
+(function (OUTPUT) {
+    OUTPUT["ENV"] = "env";
+    OUTPUT["SOURCE_BRANCH"] = "source_branch";
+    OUTPUT["TARGET_BRANCH"] = "target_branch";
+    OUTPUT["TAG"] = "tag";
+    OUTPUT["VERSION"] = "version";
+    OUTPUT["EVENT_NAME"] = "event_name";
+    OUTPUT["CREATED_AT"] = "created_at";
+    OUTPUT["SENDER"] = "sender";
+    OUTPUT["NAME"] = "name";
+})(OUTPUT || (OUTPUT = {}));
 function run() {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        const github = (0, github_1.getOctokit)(process.env.GITHUB_TOKEN, {});
-        let eventName = process.env.github;
+        // const octokit = getOctokit(process.env.GITHUB_TOKEN!, {});
+        let context = github_1.default.context;
+        console.log('context', JSON.stringify(context));
+        let eventName = context.eventName;
+        let payload = context.payload;
+        let sender = (_b = (_a = payload.sender) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : context.repo.owner;
+        let ref = context.ref;
+        let createdAt;
+        let version = 'unknown';
+        let env = 'unknown';
+        let targetBranchRef = ref;
+        let sourceBranchRef = ref;
+        let tagName;
+        if (github_1.default.context.eventName === 'release') {
+            const payload = github_1.default.context.payload;
+            let release = payload.release;
+            tagName = release.tag_name;
+            createdAt = release.created_at;
+            targetBranchRef = release.target_commitish;
+            sourceBranchRef = targetBranchRef;
+        }
+        if (github_1.default.context.eventName === 'pull_request') {
+            const payload = github_1.default.context.payload;
+            let pullRequest = payload.pull_request;
+            tagName = undefined;
+            createdAt = pullRequest.created_at;
+            targetBranchRef = pullRequest.base.ref;
+            sourceBranchRef = pullRequest.head.ref;
+        }
+        if (github_1.default.context.eventName === 'push') {
+            const payload = github_1.default.context.payload;
+            let commit = payload.head_commit;
+            tagName = undefined;
+            createdAt = commit === null || commit === void 0 ? void 0 : commit.timestamp;
+            targetBranchRef = payload.ref;
+            sourceBranchRef = targetBranchRef;
+        }
+        let refSimpleName = getSimpleName(ref);
+        if (['develop'].includes(refSimpleName) || /^develop-.*/.test(refSimpleName)) {
+            env = 'test';
+        }
+        else if (['rls'].includes(refSimpleName) || /^rls-.*/.test(refSimpleName)) {
+            env = 'rls';
+        }
+        else if (['feature'].includes(refSimpleName) || /^feature-.*/.test(refSimpleName)) {
+            env = 'dev';
+        }
+        else if (['master', 'main'].includes(refSimpleName)
+            || /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(refSimpleName)) {
+            env = 'prod';
+        }
+        if (tagName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(tagName)) {
+            version = tagName;
+        }
+        else if (refSimpleName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(refSimpleName)) {
+            version = refSimpleName;
+        }
         // 输出结果
-        core_1.default.setOutput(OUTPUT.ENV, null);
-        core_1.default.setOutput(OUTPUT.BRANCH_NAME, null);
-        core_1.default.setOutput(OUTPUT.TAGS, null);
-        core_1.default.setOutput(OUTPUT.VERSION, null);
-        core_1.default.setOutput(OUTPUT.EVENT_NAME, null);
-        core_1.default.setOutput(OUTPUT.CREATED, null);
+        core_1.default.setOutput(OUTPUT.ENV, env);
+        core_1.default.setOutput(OUTPUT.TARGET_BRANCH, getSimpleName(targetBranchRef));
+        core_1.default.setOutput(OUTPUT.SOURCE_BRANCH, getSimpleName(sourceBranchRef));
+        core_1.default.setOutput(OUTPUT.TAG, tagName);
+        core_1.default.setOutput(OUTPUT.NAME, context.sha);
+        core_1.default.setOutput(OUTPUT.VERSION, context.sha);
+        core_1.default.setOutput(OUTPUT.EVENT_NAME, eventName);
+        core_1.default.setOutput(OUTPUT.CREATED_AT, createdAt);
+        core_1.default.setOutput(OUTPUT.SENDER, sender);
     });
 }
 exports.run = run;
+let getSimpleName = (refName) => {
+    refName = `${refName}`;
+    if (refName.startsWith('refs/tags/')) {
+        return refName.replace('refs/tags/', '');
+    }
+    else if (refName.startsWith('refs/heads/')) {
+        return refName.replace('refs/heads/', '');
+    }
+    return refName;
+};
 
 
 /***/ }),

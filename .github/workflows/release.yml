@@ -13,8 +13,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - run: npm run build
-      - run: npx semantic-release
+      - run: yarn build
+      - run: release action
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: >-
