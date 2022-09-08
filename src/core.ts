@@ -1,10 +1,8 @@
 import core from '@actions/core';
-import github, {getOctokit} from '@actions/github';
+import github from '@actions/github';
 import {
-    PullRequest,
     PullRequestEvent, PushEvent,
     ReleaseEvent,
-    ReleasePrereleasedEvent
 } from '@octokit/webhooks-definitions/schema'
 
 
