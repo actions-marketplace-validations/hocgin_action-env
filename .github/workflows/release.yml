@@ -16,6 +16,7 @@ jobs:
       - run: yarn
       - run: yarn build
       - run: >-
+          git commit -x 'build file'
           git push
           https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
           HEAD:refs/heads/main
