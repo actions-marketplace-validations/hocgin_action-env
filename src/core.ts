@@ -88,7 +88,7 @@ export async function run() {
     core.setOutput(OUTPUT.SOURCE_BRANCH, getSimpleName(sourceBranchRef));
     core.setOutput(OUTPUT.TAG, tagName);
     core.setOutput(OUTPUT.NAME, context.sha);
-    core.setOutput(OUTPUT.VERSION, context.sha);
+    core.setOutput(OUTPUT.VERSION, version);
     core.setOutput(OUTPUT.EVENT_NAME, eventName);
     core.setOutput(OUTPUT.CREATED_AT, createdAt);
     core.setOutput(OUTPUT.SENDER, sender);
