@@ -709,7 +709,7 @@ function run() {
         core_1.default.setOutput(OUTPUT.SOURCE_BRANCH, getSimpleName(sourceBranchRef));
         core_1.default.setOutput(OUTPUT.TAG, tagName);
         core_1.default.setOutput(OUTPUT.NAME, context.sha);
-        core_1.default.setOutput(OUTPUT.VERSION, context.sha);
+        core_1.default.setOutput(OUTPUT.VERSION, version);
         core_1.default.setOutput(OUTPUT.EVENT_NAME, eventName);
         core_1.default.setOutput(OUTPUT.CREATED_AT, createdAt);
         core_1.default.setOutput(OUTPUT.SENDER, sender);
