@@ -4,27 +4,10 @@ import {
     PullRequestEvent, PushEvent,
     ReleaseEvent,
 } from '@octokit/webhooks-definitions/schema'
+import {Inputs, Outputs} from "./main";
 
-
-enum OUTPUT {
-    ENV = "env",
-    SOURCE_BRANCH = "source_branch",
-    TARGET_BRANCH = "target_branch",
-    TAG = "tag",
-    VERSION = "version",
-    EVENT_NAME = "event_name",
-    CREATED_AT = "created_at",
-    SENDER = "sender",
-    NAME = "name",
-}
-
-
-export async function run() {
-    // const octokit = getOctokit(process.env.GITHUB_TOKEN!, {});
-
+export function run(input: Inputs): Outputs {
     let context = github.context;
-    console.log('日志信息')
-    console.log('context', JSON.stringify(context));
     let eventName = context.eventName;
     let payload = context.payload;
     let sender = payload.sender?.name ?? context.repo.owner;
@@ -82,16 +65,17 @@ export async function run() {
         version = refSimpleName;
     }
 
-    // 输出结果
-    core.setOutput(OUTPUT.ENV, env);
-    core.setOutput(OUTPUT.TARGET_BRANCH, getSimpleName(targetBranchRef));
-    core.setOutput(OUTPUT.SOURCE_BRANCH, getSimpleName(sourceBranchRef));
-    core.setOutput(OUTPUT.TAG, tagName);
-    core.setOutput(OUTPUT.NAME, context.sha);
-    core.setOutput(OUTPUT.VERSION, version);
-    core.setOutput(OUTPUT.EVENT_NAME, eventName);
-    core.setOutput(OUTPUT.CREATED_AT, createdAt);
-    core.setOutput(OUTPUT.SENDER, sender);
+    return {
+        env,
+        target_branch: getSimpleName(targetBranchRef),
+        source_branch: getSimpleName(sourceBranchRef),
+        tag: tagName,
+        name: context.sha,
+        version,
+        event_name: eventName,
+        created_at: createdAt as any,
+        sender
+    }
 }
 
 
