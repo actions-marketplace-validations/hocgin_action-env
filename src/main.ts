@@ -1,3 +1,8 @@
 import {run} from "./core";
+import * as core from "@actions/core";
 
-run();
+try {
+    run()
+} catch (error: any) {
+    core.setFailed(error?.message);
+}
