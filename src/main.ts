@@ -6,6 +6,7 @@ export interface Inputs {
 }
 
 export interface Outputs {
+    workflow?: string;
     env?: string;
     source_branch?: string;
     target_branch?: string;
@@ -15,6 +16,14 @@ export interface Outputs {
     created_at?: string;
     sender?: string;
     name?: string;
+    ownerName?: string;
+    owner?: string;
+    ref?: string;
+    sha?: string;
+    repo_url?: string;
+    repo_html_url?: string;
+    action_run_url?: string;
+    action_run_job_url?: string;
 
     [key: string]: any
 }
