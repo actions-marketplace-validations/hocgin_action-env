@@ -6,25 +6,33 @@ export interface Inputs {
 }
 
 export interface Outputs {
-    workflow?: string;
     env?: string;
     source_branch?: string;
     target_branch?: string;
     tag?: string;
     version?: string;
-    event_name?: string;
-    created_at?: string;
-    sender?: string;
-    name?: string;
-    full_name?: string;
-    owner?: string;
-    ref?: string;
-    sha?: string;
-    repo_url?: string;
+
+    action_event_name?: string;
     action_html_url?: string;
+    action_workflow?: string;
+    action_trigger_at?: string;
+
+    sender?: string;
+    sender_avatar_url?: string;
+    sender_html_url?: string;
+
+    repo_name?: string;
+    repo_full_name?: string;
+    repo_owner?: string;
+    repo_homepage?: string;
+    repo_description?: string;
     repo_html_url?: string;
+    repo_language?: string;
+
     commit_html_url?: string;
     commit_body?: string;
+    commit_ref?: string;
+    commit_sha?: string;
 
     [key: string]: any
 }

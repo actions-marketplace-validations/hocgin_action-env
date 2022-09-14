@@ -9,7 +9,6 @@ export function run(input: Inputs): Outputs {
     let context = github.context;
     let eventName = context.eventName;
     let payload = context.payload;
-    let sender = payload.sender?.name ?? context.repo.owner;
     let ref = context.ref;
     let createdAt;
     let version;
@@ -64,37 +63,48 @@ export function run(input: Inputs): Outputs {
     }
     let repository = context.payload.repository;
     let fullName = repository?.full_name;
-    let htmlUrl = repository?.html_url;
+    let repo_url = repository?.html_url;
     let name = repository?.name;
     let owner = repository?.owner;
+    let repo_description = repository?.description;
 
     debugPrintf('github.context', context);
 
-    let repo_url = `https://github.com/${fullName}`;
+    let repo_homepage = repository?.homepage;
     let action_html_url = `${repo_url}/actions/runs/${context.runId}`;
     let pullRequest = payload?.pull_request;
     let commit_html_url = pullRequest?.html_url ?? `${repo_url}/commit/${context.sha}`;
     let commit_body = `${pullRequest?.body ?? `commit`}`
+    let sender = payload.sender?.login;
+
     return {
-        workflow: context.workflow,
         env,
         target_branch: getSimpleName(targetBranchRef),
         source_branch: getSimpleName(sourceBranchRef),
         tag: tagName,
-        name: name,
-        full_name: fullName,
-        ref: context.ref,
-        sha: context.sha,
-        owner: owner?.login,
-        repo_url,
-        repo_html_url: `${htmlUrl}`,
+        version,
+        // === 触发信息 ===
         action_html_url,
+        action_event_name: eventName,
+        action_workflow: context.workflow,
+        action_trigger_at: `${new Date().toISOString()}`,
+        // === 仓库信息 ===
+        repo_owner: owner?.login,
+        repo_name: name,
+        repo_full_name: fullName,
+        repo_homepage,
+        repo_description,
+        repo_html_url: repo_url,
+        repo_language: repository?.language,
+        // === 提交信息 ===
         commit_html_url,
         commit_body,
-        version,
-        event_name: eventName,
-        created_at: createdAt as any,
-        sender
+        commit_ref: context.ref,
+        commit_sha: context.sha,
+        // === 触发人信息 ===
+        sender,
+        sender_avatar_url: sender?.avatar_url,
+        sender_html_url: sender?.html_url,
     }
 }
 
