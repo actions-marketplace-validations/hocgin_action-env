@@ -16,14 +16,15 @@ export interface Outputs {
     created_at?: string;
     sender?: string;
     name?: string;
-    ownerName?: string;
+    full_name?: string;
     owner?: string;
     ref?: string;
     sha?: string;
     repo_url?: string;
+    action_html_url?: string;
     repo_html_url?: string;
-    action_run_url?: string;
-    action_run_job_url?: string;
+    commit_html_url?: string;
+    commit_body?: string;
 
     [key: string]: any
 }

@@ -3,7 +3,7 @@ import {
     PullRequestEvent, PushEvent,
     ReleaseEvent,
 } from '@octokit/webhooks-definitions/schema'
-import {Inputs, Outputs} from "./main";
+import {debugPrintf, Inputs, Outputs} from "./main";
 
 export function run(input: Inputs): Outputs {
     let context = github.context;
@@ -17,7 +17,6 @@ export function run(input: Inputs): Outputs {
 
     let targetBranchRef: (string | undefined) = ref;
     let sourceBranchRef: (string | undefined) = ref;
-
 
     let tagName;
     if (context.eventName === 'release') {
@@ -69,24 +68,29 @@ export function run(input: Inputs): Outputs {
     let name = repository?.name;
     let owner = repository?.owner;
 
-    let repoUrl = `https://github.com/${fullName}`;
-    let runActionUrl = `${repoUrl}/actions/runs/${context.runId}`;
-    let runJobActionUrl = `${repoUrl}/actions/runs/${context.runId}/jobs/${context.job}`;
+    debugPrintf('github.context', context);
+
+    let repo_url = `https://github.com/${fullName}`;
+    let action_html_url = `${repo_url}/actions/runs/${context.runId}`;
+    let pullRequest = payload?.pull_request;
+    let commit_html_url = pullRequest?.html_url ?? `${repo_url}/commit/${context.sha}`;
+    let commit_body = `${pullRequest?.body ?? `commit`}`
     return {
-        action_run_url: runActionUrl,
-        action_run_job_url: runJobActionUrl,
         workflow: context.workflow,
         env,
         target_branch: getSimpleName(targetBranchRef),
         source_branch: getSimpleName(sourceBranchRef),
         tag: tagName,
         name: name,
-        repo_url: repoUrl,
-        repo_html_url: `${htmlUrl}`,
+        full_name: fullName,
         ref: context.ref,
         sha: context.sha,
-        ownerName: owner?.name,
         owner: owner?.login,
+        repo_url,
+        repo_html_url: `${htmlUrl}`,
+        action_html_url,
+        commit_html_url,
+        commit_body,
         version,
         event_name: eventName,
         created_at: createdAt as any,
