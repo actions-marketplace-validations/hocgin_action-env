@@ -87,7 +87,7 @@ export function run(input: Inputs): Outputs {
         action_html_url,
         action_event_name: eventName,
         action_workflow: context.workflow,
-        action_trigger_at: `${new Date().toISOString()}`,
+        action_trigger_at: DateISOString(new Date(), input.offset_hours),
         // === 仓库信息 ===
         repo_owner: owner?.login,
         repo_name: name,
@@ -118,3 +118,9 @@ let getSimpleName = (refName: string) => {
     }
     return refName;
 };
+
+function DateISOString(date: Date, offsetHours: number): string {
+    let utcd = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(),
+        date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+    return new Date(utcd + (offsetHours * 60000)).toISOString().replace(".000", "");
+}

@@ -1,7 +1,15 @@
 name: 'action-env'
 author: 'hocgin'
 description: '项目环境判定'
-#inputs:
+inputs:
+  debug:
+    required: false
+    default: false
+    description: '是否测试状态'
+  offset_hours:
+    required: true
+    default: '8'
+    description: '时区偏移小时'
 outputs:
   env:
     description: '最终环境: dev/test/rls/prod/unknown'
@@ -13,14 +21,42 @@ outputs:
     description: '标签: v1.0.0'
   version:
     description: '版本: v1.0.0'
-  name:
-    description: '名称: sha-${GITHUB_SHA::8}'
-  event_name:
+  action_event_name:
     description: '触发事件: schedule/'
-  created_at:
-    description: '执行时间'
+  action_html_url:
+    description: '触发工作流地址'
+  action_workflow:
+    description: '触发工作流文件'
+  action_trigger_at:
+    description: '触发时间'
+  repo_name:
+    description: '仓库名称'
+  repo_full_name:
+    description: '仓库全名称'
+  repo_owner:
+    description: '仓库作者'
+  repo_homepage:
+    description: '仓库主页'
+  repo_description:
+    description: '仓库描述'
+  repo_html_url:
+    description: '仓库地址'
+  repo_language:
+    description: '仓库语言'
+  commit_html_url:
+    description: '提交地址'
+  commit_body:
+    description: '提交消息'
+  commit_ref:
+    description: '提交分支'
+  commit_sha:
+    description: '提交地址'
   sender:
     description: '操作人: hocgin'
+  sender_avatar_url:
+    description: '操作人头像'
+  sender_html_url:
+    description: '操作人主页'
 runs:
   using: node16
   main: dist/index.js

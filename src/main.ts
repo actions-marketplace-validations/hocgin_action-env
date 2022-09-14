@@ -3,6 +3,7 @@ import * as core from "@actions/core";
 
 export interface Inputs {
     debug?: boolean;
+    offset_hours: number;
 }
 
 export interface Outputs {
@@ -38,7 +39,8 @@ export interface Outputs {
 }
 
 let getInput = (): Inputs => ({
-    debug: core.getInput('debug') === 'true'
+    debug: core.getInput('debug') === 'true',
+    offset_hours: parseInt(core.getInput('offset_hours', {required: true}) ?? '8')
 })
 
 let handleOutput = (output: Outputs = {}) => {
