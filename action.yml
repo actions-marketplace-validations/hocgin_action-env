@@ -22,5 +22,5 @@ outputs:
   sender:
     description: '操作人: hocgin'
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
