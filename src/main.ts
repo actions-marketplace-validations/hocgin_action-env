@@ -38,14 +38,12 @@ let handleOutput = (output: Outputs = {}) => {
     debugPrintf('输出变量: ', output);
 };
 
-try {
-    handleOutput(run(getInput()))
-} catch (error: any) {
-    core.setFailed(error?.message);
+export function debugPrintf(...args: any) {
+    if (getInput().debug) console.log(...args)
 }
 
-export function debugPrintf(...args: any) {
-    if (getInput().debug) {
-        console.log(...args);
-    }
+try {
+    handleOutput(run(getInput()));
+} catch (error: any) {
+    core.setFailed(error?.message);
 }
