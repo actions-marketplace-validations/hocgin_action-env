@@ -8,7 +8,7 @@ inputs:
     description: '是否测试状态'
   offset_hours:
     required: true
-    default: '8'
+    default: '-8'
     description: '时区偏移小时'
 outputs:
   env:

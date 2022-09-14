@@ -40,7 +40,7 @@ export interface Outputs {
 
 let getInput = (): Inputs => ({
     debug: core.getInput('debug') === 'true',
-    offset_hours: parseInt(core.getInput('offset_hours', {required: true}) ?? '8')
+    offset_hours: parseInt(core.getInput('offset_hours', {required: true}) ?? '-8')
 })
 
 let handleOutput = (output: Outputs = {}) => {

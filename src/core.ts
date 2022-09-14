@@ -120,7 +120,7 @@ let getSimpleName = (refName: string) => {
 };
 
 function DateISOString(date: Date, offsetHours: number): string {
-    let utcd = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(),
-        date.getMinutes(), date.getSeconds(), date.getMilliseconds());
-    return new Date(utcd + (offsetHours * 60000)).toISOString().replace(".000", "");
+    let tzoffset = offsetHours * 60 * 60000;
+    let localISOTime = (new Date(Date.now() - tzoffset)).toISOString();
+    return localISOTime.slice(0, -5);
 }
