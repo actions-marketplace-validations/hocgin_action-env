@@ -177,18 +177,17 @@ let handleOutput = (output = {}) => {
     Object.keys(output).forEach((key) => core.setOutput(key, output[key]));
     debugPrintf('输出变量: ', output);
 };
+function debugPrintf(...args) {
+    if (getInput().debug)
+        console.log(...args);
+}
+exports.debugPrintf = debugPrintf;
 try {
     handleOutput((0, core_1.run)(getInput()));
 }
 catch (error) {
     core.setFailed(error === null || error === void 0 ? void 0 : error.message);
 }
-function debugPrintf(...args) {
-    if (getInput().debug) {
-        console.log(...args);
-    }
-}
-exports.debugPrintf = debugPrintf;
 
 
 /***/ }),
