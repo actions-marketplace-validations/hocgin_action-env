@@ -75,7 +75,7 @@ export function run(input: Inputs): Outputs {
     let pullRequest = payload?.pull_request;
     let commit_html_url = pullRequest?.html_url ?? `${repo_url}/commit/${context.sha}`;
     let commit_body = `${pullRequest?.body ?? `commit`}`
-    let sender = payload.sender?.login;
+    let sender = payload.sender;
 
     return {
         env,
@@ -102,7 +102,7 @@ export function run(input: Inputs): Outputs {
         commit_ref: context.ref,
         commit_sha: context.sha,
         // === 触发人信息 ===
-        sender,
+        sender: sender?.login,
         sender_avatar_url: sender?.avatar_url,
         sender_html_url: sender?.html_url,
     }
