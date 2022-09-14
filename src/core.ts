@@ -10,19 +10,17 @@ export function run(input: Inputs): Outputs {
     let eventName = context.eventName;
     let payload = context.payload;
     let ref = context.ref;
-    let createdAt;
+    let createdAt = new Date();
     let version;
     let env;
 
     let targetBranchRef: (string | undefined) = ref;
     let sourceBranchRef: (string | undefined) = ref;
 
-    let tagName;
+    let tagName = getTagName(ref);
     if (context.eventName === 'release') {
         const payload = context.payload as ReleaseEvent;
         let release = payload.release;
-        tagName = release.tag_name;
-        createdAt = release.created_at;
 
         targetBranchRef = release.target_commitish
         sourceBranchRef = targetBranchRef
@@ -30,16 +28,11 @@ export function run(input: Inputs): Outputs {
     if (context.eventName === 'pull_request') {
         const payload = context.payload as PullRequestEvent;
         let pullRequest = payload.pull_request;
-        tagName = undefined;
-        createdAt = pullRequest.created_at;
         targetBranchRef = pullRequest.base.ref
         sourceBranchRef = pullRequest.head.ref
     }
     if (context.eventName === 'push') {
         const payload = context.payload as PushEvent;
-        let commit = payload.head_commit;
-        tagName = undefined;
-        createdAt = commit?.timestamp;
         targetBranchRef = payload.ref
         sourceBranchRef = targetBranchRef;
     }
@@ -87,7 +80,7 @@ export function run(input: Inputs): Outputs {
         action_html_url,
         action_event_name: eventName,
         action_workflow: context.workflow,
-        action_trigger_at: DateISOString(new Date(), input.offset_hours),
+        action_trigger_at: DateISOString(createdAt, input.offset_hours),
         // === 仓库信息 ===
         repo_owner: owner?.login,
         repo_name: name,
@@ -106,6 +99,14 @@ export function run(input: Inputs): Outputs {
         sender_avatar_url: sender?.avatar_url,
         sender_html_url: sender?.html_url,
     }
+}
+
+let getTagName = (ref: string): (string | undefined) => {
+    ref = `${ref}`;
+    if (ref.startsWith('refs/tags/')) {
+        return ref.replace('refs/tags/', '');
+    }
+    return undefined;
 }
 
 
