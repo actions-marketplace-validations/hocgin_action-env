@@ -34,7 +34,7 @@ exports.run = void 0;
 const github = __importStar(__nccwpck_require__(438));
 const main_1 = __nccwpck_require__(109);
 function run(input) {
-    var _a, _b, _c;
+    var _a, _b;
     let context = github.context;
     let eventName = context.eventName;
     let payload = context.payload;
@@ -101,7 +101,7 @@ function run(input) {
     let pullRequest = payload === null || payload === void 0 ? void 0 : payload.pull_request;
     let commit_html_url = (_a = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.html_url) !== null && _a !== void 0 ? _a : `${repo_url}/commit/${context.sha}`;
     let commit_body = `${(_b = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.body) !== null && _b !== void 0 ? _b : `commit`}`;
-    let sender = (_c = payload.sender) === null || _c === void 0 ? void 0 : _c.login;
+    let sender = payload.sender;
     return {
         env,
         target_branch: getSimpleName(targetBranchRef),
@@ -127,7 +127,7 @@ function run(input) {
         commit_ref: context.ref,
         commit_sha: context.sha,
         // === 触发人信息 ===
-        sender,
+        sender: sender === null || sender === void 0 ? void 0 : sender.login,
         sender_avatar_url: sender === null || sender === void 0 ? void 0 : sender.avatar_url,
         sender_html_url: sender === null || sender === void 0 ? void 0 : sender.html_url,
     };
