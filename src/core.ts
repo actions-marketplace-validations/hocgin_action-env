@@ -43,12 +43,12 @@ export function run(input: Inputs): Outputs {
     if (context.eventName === 'pull_request') {
         const payload = context.payload as PullRequestEvent;
         let pullRequest = payload.pull_request;
-        targetBranchName = pullRequest.base.ref
-        sourceSimpleName = pullRequest.head.ref
+        targetBranchName = getSimpleName(pullRequest.base.ref)
+        sourceSimpleName = getSimpleName(pullRequest.head.ref)
     }
     if (context.eventName === 'push') {
         const payload = context.payload as PushEvent;
-        targetBranchName = payload.ref
+        targetBranchName = getSimpleName(payload.ref);
     }
     if (context.eventName === 'workflow_run') {
         const payload = context.payload as WorkflowRunEvent;
@@ -56,6 +56,7 @@ export function run(input: Inputs): Outputs {
 
         commit_body = `${workflowRun?.head_commit?.message}`;
         sourceSimpleName = workflowRun?.head_branch;
+        targetBranchName = workflowRun?.head_branch;
     }
 
     if (['develop'].includes(targetBranchName) || /^develop-.*/.test(targetBranchName)) {
