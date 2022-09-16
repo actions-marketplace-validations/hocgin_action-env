@@ -57,7 +57,7 @@ function run(input) {
     let sender = payload.sender;
     let tagName = getTagName(ref);
     let sourceSimpleName = getSimpleName(ref);
-    let targetBranchName;
+    let targetBranchName = getSimpleName(ref);
     if (context.eventName === 'release') {
         const payload = context.payload;
         let release = payload.release;
@@ -79,17 +79,17 @@ function run(input) {
         commit_body = `${(_c = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_commit) === null || _c === void 0 ? void 0 : _c.message}`;
         sourceSimpleName = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_branch;
     }
-    if (['develop'].includes(sourceSimpleName) || /^develop-.*/.test(sourceSimpleName)) {
+    if (['develop'].includes(targetBranchName) || /^develop-.*/.test(targetBranchName)) {
         env = 'test';
     }
-    else if (['rls'].includes(sourceSimpleName) || /^rls-.*/.test(sourceSimpleName)) {
+    else if (['rls'].includes(targetBranchName) || /^rls-.*/.test(targetBranchName)) {
         env = 'rls';
     }
-    else if (['feature'].includes(sourceSimpleName) || /^feature-.*/.test(sourceSimpleName)) {
+    else if (['feature'].includes(targetBranchName) || /^feature-.*/.test(targetBranchName)) {
         env = 'dev';
     }
-    else if (['master', 'main'].includes(sourceSimpleName)
-        || /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(sourceSimpleName)) {
+    else if (['master', 'main'].includes(targetBranchName)
+        || /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(targetBranchName)) {
         env = 'prod';
     }
     if (tagName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(tagName)) {
