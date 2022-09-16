@@ -112,7 +112,7 @@ function run(input) {
         action_html_url,
         action_event_name: eventName,
         action_workflow: context.workflow,
-        action_trigger_at: `${new Date().toISOString()}`,
+        action_trigger_at: DateISOString(new Date(), input.offset_hours),
         // === 仓库信息 ===
         repo_owner: owner === null || owner === void 0 ? void 0 : owner.login,
         repo_name: name,
@@ -143,6 +143,10 @@ let getSimpleName = (refName) => {
     }
     return refName;
 };
+function DateISOString(date, offsetHours) {
+    let utcd = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+    return new Date(utcd + (offsetHours * 60000)).toISOString().replace(".000", "");
+}
 
 
 /***/ }),
@@ -179,9 +183,13 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.debugPrintf = void 0;
 const core_1 = __nccwpck_require__(298);
 const core = __importStar(__nccwpck_require__(186));
-let getInput = () => ({
-    debug: core.getInput('debug') === 'true'
-});
+let getInput = () => {
+    var _a;
+    return ({
+        debug: core.getInput('debug') === 'true',
+        offset_hours: parseInt((_a = core.getInput('offset_hours', { required: true })) !== null && _a !== void 0 ? _a : '8')
+    });
+};
 let handleOutput = (output = {}) => {
     Object.keys(output).forEach((key) => core.setOutput(key, output[key]));
     debugPrintf('输出变量: ', output);
