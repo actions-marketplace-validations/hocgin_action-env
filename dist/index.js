@@ -34,7 +34,7 @@ exports.run = void 0;
 const github = __importStar(__nccwpck_require__(438));
 const main_1 = __nccwpck_require__(109);
 function run(input) {
-    var _a, _b;
+    var _a, _b, _c;
     let context = github.context;
     let eventName = context.eventName;
     let payload = context.payload;
@@ -42,46 +42,6 @@ function run(input) {
     let createdAt = new Date();
     let version;
     let env;
-    let targetBranchRef = ref;
-    let sourceBranchRef = ref;
-    let tagName = getTagName(ref);
-    if (context.eventName === 'release') {
-        const payload = context.payload;
-        let release = payload.release;
-        targetBranchRef = release.target_commitish;
-        sourceBranchRef = targetBranchRef;
-    }
-    if (context.eventName === 'pull_request') {
-        const payload = context.payload;
-        let pullRequest = payload.pull_request;
-        targetBranchRef = pullRequest.base.ref;
-        sourceBranchRef = pullRequest.head.ref;
-    }
-    if (context.eventName === 'push') {
-        const payload = context.payload;
-        targetBranchRef = payload.ref;
-        sourceBranchRef = targetBranchRef;
-    }
-    let refSimpleName = getSimpleName(ref);
-    if (['develop'].includes(refSimpleName) || /^develop-.*/.test(refSimpleName)) {
-        env = 'test';
-    }
-    else if (['rls'].includes(refSimpleName) || /^rls-.*/.test(refSimpleName)) {
-        env = 'rls';
-    }
-    else if (['feature'].includes(refSimpleName) || /^feature-.*/.test(refSimpleName)) {
-        env = 'dev';
-    }
-    else if (['master', 'main'].includes(refSimpleName)
-        || /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(refSimpleName)) {
-        env = 'prod';
-    }
-    if (tagName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(tagName)) {
-        version = tagName;
-    }
-    else if (refSimpleName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(refSimpleName)) {
-        version = refSimpleName;
-    }
     let repository = context.payload.repository;
     let fullName = repository === null || repository === void 0 ? void 0 : repository.full_name;
     let repo_url = repository === null || repository === void 0 ? void 0 : repository.html_url;
@@ -95,10 +55,53 @@ function run(input) {
     let commit_html_url = (_a = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.html_url) !== null && _a !== void 0 ? _a : `${repo_url}/commit/${context.sha}`;
     let commit_body = `${(_b = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.body) !== null && _b !== void 0 ? _b : `commit`}`;
     let sender = payload.sender;
+    let tagName = getTagName(ref);
+    let sourceSimpleName = getSimpleName(ref);
+    let targetBranchName;
+    if (context.eventName === 'release') {
+        const payload = context.payload;
+        let release = payload.release;
+        targetBranchName = release.target_commitish;
+    }
+    if (context.eventName === 'pull_request') {
+        const payload = context.payload;
+        let pullRequest = payload.pull_request;
+        targetBranchName = pullRequest.base.ref;
+        sourceSimpleName = pullRequest.head.ref;
+    }
+    if (context.eventName === 'push') {
+        const payload = context.payload;
+        targetBranchName = payload.ref;
+    }
+    if (context.eventName === 'workflow_run') {
+        const payload = context.payload;
+        let workflowRun = payload.workflow_run;
+        commit_body = `${(_c = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_commit) === null || _c === void 0 ? void 0 : _c.message}`;
+        sourceSimpleName = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_branch;
+    }
+    if (['develop'].includes(sourceSimpleName) || /^develop-.*/.test(sourceSimpleName)) {
+        env = 'test';
+    }
+    else if (['rls'].includes(sourceSimpleName) || /^rls-.*/.test(sourceSimpleName)) {
+        env = 'rls';
+    }
+    else if (['feature'].includes(sourceSimpleName) || /^feature-.*/.test(sourceSimpleName)) {
+        env = 'dev';
+    }
+    else if (['master', 'main'].includes(sourceSimpleName)
+        || /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(sourceSimpleName)) {
+        env = 'prod';
+    }
+    if (tagName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(tagName)) {
+        version = tagName;
+    }
+    else if (sourceSimpleName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(sourceSimpleName)) {
+        version = sourceSimpleName;
+    }
     return {
         env,
-        target_branch: getSimpleName(targetBranchRef),
-        source_branch: getSimpleName(sourceBranchRef),
+        target_branch: targetBranchName,
+        source_branch: sourceSimpleName,
         tag: tagName,
         version,
         // === 触发信息 ===
