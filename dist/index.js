@@ -144,8 +144,9 @@ let getSimpleName = (refName) => {
     return refName;
 };
 function DateISOString(date, offsetHours) {
-    let utcd = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
-    return new Date(utcd + (offsetHours * 60000)).toISOString().replace(".000", "");
+    let tzoffset = offsetHours * 60 * 60000;
+    let localISOTime = (new Date(Date.now() - tzoffset)).toISOString();
+    return localISOTime.slice(0, -5);
 }
 
 
@@ -187,7 +188,7 @@ let getInput = () => {
     var _a;
     return ({
         debug: core.getInput('debug') === 'true',
-        offset_hours: parseInt((_a = core.getInput('offset_hours', { required: true })) !== null && _a !== void 0 ? _a : '8')
+        offset_hours: parseInt((_a = core.getInput('offset_hours', { required: true })) !== null && _a !== void 0 ? _a : '-8')
     });
 };
 let handleOutput = (output = {}) => {
