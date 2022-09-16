@@ -40,29 +40,29 @@ function run(input) {
     let sender = (_b = (_a = payload.sender) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : context.repo.owner;
     let ref = context.ref;
     let createdAt;
-    let version = 'unknown';
-    let env = 'unknown';
+    let version;
+    let env;
     let targetBranchRef = ref;
     let sourceBranchRef = ref;
     let tagName;
-    if (github.context.eventName === 'release') {
-        const payload = github.context.payload;
+    if (context.eventName === 'release') {
+        const payload = context.payload;
         let release = payload.release;
         tagName = release.tag_name;
         createdAt = release.created_at;
         targetBranchRef = release.target_commitish;
         sourceBranchRef = targetBranchRef;
     }
-    if (github.context.eventName === 'pull_request') {
-        const payload = github.context.payload;
+    if (context.eventName === 'pull_request') {
+        const payload = context.payload;
         let pullRequest = payload.pull_request;
         tagName = undefined;
         createdAt = pullRequest.created_at;
         targetBranchRef = pullRequest.base.ref;
         sourceBranchRef = pullRequest.head.ref;
     }
-    if (github.context.eventName === 'push') {
-        const payload = github.context.payload;
+    if (context.eventName === 'push') {
+        const payload = context.payload;
         let commit = payload.head_commit;
         tagName = undefined;
         createdAt = commit === null || commit === void 0 ? void 0 : commit.timestamp;
@@ -89,12 +89,29 @@ function run(input) {
     else if (refSimpleName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(refSimpleName)) {
         version = refSimpleName;
     }
+    let repository = context.payload.repository;
+    let fullName = repository === null || repository === void 0 ? void 0 : repository.full_name;
+    let htmlUrl = repository === null || repository === void 0 ? void 0 : repository.html_url;
+    let name = repository === null || repository === void 0 ? void 0 : repository.name;
+    let owner = repository === null || repository === void 0 ? void 0 : repository.owner;
+    let repoUrl = `https://github.com/${fullName}`;
+    let runActionUrl = `${repoUrl}/actions/runs/${context.runId}`;
+    let runJobActionUrl = `${repoUrl}/actions/runs/${context.runId}/jobs/${context.job}`;
     return {
+        action_run_url: runActionUrl,
+        action_run_job_url: runJobActionUrl,
+        workflow: context.workflow,
         env,
         target_branch: getSimpleName(targetBranchRef),
         source_branch: getSimpleName(sourceBranchRef),
         tag: tagName,
-        name: context.sha,
+        name: name,
+        repo_url: repoUrl,
+        repo_html_url: `${htmlUrl}`,
+        ref: context.ref,
+        sha: context.sha,
+        ownerName: owner === null || owner === void 0 ? void 0 : owner.name,
+        owner: owner === null || owner === void 0 ? void 0 : owner.login,
         version,
         event_name: eventName,
         created_at: createdAt,
