@@ -66,18 +66,19 @@ function run(input) {
     if (context.eventName === 'pull_request') {
         const payload = context.payload;
         let pullRequest = payload.pull_request;
-        targetBranchName = pullRequest.base.ref;
-        sourceSimpleName = pullRequest.head.ref;
+        targetBranchName = getSimpleName(pullRequest.base.ref);
+        sourceSimpleName = getSimpleName(pullRequest.head.ref);
     }
     if (context.eventName === 'push') {
         const payload = context.payload;
-        targetBranchName = payload.ref;
+        targetBranchName = getSimpleName(payload.ref);
     }
     if (context.eventName === 'workflow_run') {
         const payload = context.payload;
         let workflowRun = payload.workflow_run;
         commit_body = `${(_c = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_commit) === null || _c === void 0 ? void 0 : _c.message}`;
         sourceSimpleName = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_branch;
+        targetBranchName = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_branch;
     }
     if (['develop'].includes(targetBranchName) || /^develop-.*/.test(targetBranchName)) {
         env = 'test';
