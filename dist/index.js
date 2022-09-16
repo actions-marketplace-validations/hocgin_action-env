@@ -32,8 +32,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const github = __importStar(__nccwpck_require__(438));
+const main_1 = __nccwpck_require__(109);
 function run(input) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     let context = github.context;
     let eventName = context.eventName;
     let payload = context.payload;
@@ -94,24 +95,28 @@ function run(input) {
     let htmlUrl = repository === null || repository === void 0 ? void 0 : repository.html_url;
     let name = repository === null || repository === void 0 ? void 0 : repository.name;
     let owner = repository === null || repository === void 0 ? void 0 : repository.owner;
-    let repoUrl = `https://github.com/${fullName}`;
-    let runActionUrl = `${repoUrl}/actions/runs/${context.runId}`;
-    let runJobActionUrl = `${repoUrl}/actions/runs/${context.runId}/jobs/${context.job}`;
+    (0, main_1.debugPrintf)('github.context', context);
+    let repo_url = `https://github.com/${fullName}`;
+    let action_html_url = `${repo_url}/actions/runs/${context.runId}`;
+    let pullRequest = payload === null || payload === void 0 ? void 0 : payload.pull_request;
+    let commit_html_url = (_c = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.html_url) !== null && _c !== void 0 ? _c : `${repo_url}/commit/${context.sha}`;
+    let commit_body = `${(_d = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.body) !== null && _d !== void 0 ? _d : `commit`}`;
     return {
-        action_run_url: runActionUrl,
-        action_run_job_url: runJobActionUrl,
         workflow: context.workflow,
         env,
         target_branch: getSimpleName(targetBranchRef),
         source_branch: getSimpleName(sourceBranchRef),
         tag: tagName,
         name: name,
-        repo_url: repoUrl,
-        repo_html_url: `${htmlUrl}`,
+        full_name: fullName,
         ref: context.ref,
         sha: context.sha,
-        ownerName: owner === null || owner === void 0 ? void 0 : owner.name,
         owner: owner === null || owner === void 0 ? void 0 : owner.login,
+        repo_url,
+        repo_html_url: `${htmlUrl}`,
+        action_html_url,
+        commit_html_url,
+        commit_body,
         version,
         event_name: eventName,
         created_at: createdAt,
