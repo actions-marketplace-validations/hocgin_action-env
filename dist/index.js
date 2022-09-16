@@ -34,11 +34,10 @@ exports.run = void 0;
 const github = __importStar(__nccwpck_require__(438));
 const main_1 = __nccwpck_require__(109);
 function run(input) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     let context = github.context;
     let eventName = context.eventName;
     let payload = context.payload;
-    let sender = (_b = (_a = payload.sender) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : context.repo.owner;
     let ref = context.ref;
     let createdAt;
     let version;
@@ -92,35 +91,45 @@ function run(input) {
     }
     let repository = context.payload.repository;
     let fullName = repository === null || repository === void 0 ? void 0 : repository.full_name;
-    let htmlUrl = repository === null || repository === void 0 ? void 0 : repository.html_url;
+    let repo_url = repository === null || repository === void 0 ? void 0 : repository.html_url;
     let name = repository === null || repository === void 0 ? void 0 : repository.name;
     let owner = repository === null || repository === void 0 ? void 0 : repository.owner;
+    let repo_description = repository === null || repository === void 0 ? void 0 : repository.description;
     (0, main_1.debugPrintf)('github.context', context);
-    let repo_url = `https://github.com/${fullName}`;
+    let repo_homepage = repository === null || repository === void 0 ? void 0 : repository.homepage;
     let action_html_url = `${repo_url}/actions/runs/${context.runId}`;
     let pullRequest = payload === null || payload === void 0 ? void 0 : payload.pull_request;
-    let commit_html_url = (_c = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.html_url) !== null && _c !== void 0 ? _c : `${repo_url}/commit/${context.sha}`;
-    let commit_body = `${(_d = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.body) !== null && _d !== void 0 ? _d : `commit`}`;
+    let commit_html_url = (_a = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.html_url) !== null && _a !== void 0 ? _a : `${repo_url}/commit/${context.sha}`;
+    let commit_body = `${(_b = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.body) !== null && _b !== void 0 ? _b : `commit`}`;
+    let sender = (_c = payload.sender) === null || _c === void 0 ? void 0 : _c.login;
     return {
-        workflow: context.workflow,
         env,
         target_branch: getSimpleName(targetBranchRef),
         source_branch: getSimpleName(sourceBranchRef),
         tag: tagName,
-        name: name,
-        full_name: fullName,
-        ref: context.ref,
-        sha: context.sha,
-        owner: owner === null || owner === void 0 ? void 0 : owner.login,
-        repo_url,
-        repo_html_url: `${htmlUrl}`,
+        version,
+        // === 触发信息 ===
         action_html_url,
+        action_event_name: eventName,
+        action_workflow: context.workflow,
+        action_trigger_at: `${new Date().toISOString()}`,
+        // === 仓库信息 ===
+        repo_owner: owner === null || owner === void 0 ? void 0 : owner.login,
+        repo_name: name,
+        repo_full_name: fullName,
+        repo_homepage,
+        repo_description,
+        repo_html_url: repo_url,
+        repo_language: repository === null || repository === void 0 ? void 0 : repository.language,
+        // === 提交信息 ===
         commit_html_url,
         commit_body,
-        version,
-        event_name: eventName,
-        created_at: createdAt,
-        sender
+        commit_ref: context.ref,
+        commit_sha: context.sha,
+        // === 触发人信息 ===
+        sender,
+        sender_avatar_url: sender === null || sender === void 0 ? void 0 : sender.avatar_url,
+        sender_html_url: sender === null || sender === void 0 ? void 0 : sender.html_url,
     };
 }
 exports.run = run;
