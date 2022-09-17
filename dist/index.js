@@ -78,7 +78,6 @@ function run(input) {
         let workflowRun = payload.workflow_run;
         commit_body = `${(_c = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_commit) === null || _c === void 0 ? void 0 : _c.message}`;
         sourceSimpleName = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_branch;
-        targetBranchName = workflowRun === null || workflowRun === void 0 ? void 0 : workflowRun.head_branch;
     }
     if (['develop'].includes(targetBranchName) || /^develop-.*/.test(targetBranchName)) {
         env = 'test';
