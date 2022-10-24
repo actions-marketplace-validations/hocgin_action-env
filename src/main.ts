@@ -12,6 +12,7 @@ export interface Outputs {
     target_branch?: string;
     tag?: string;
     version?: string;
+    version_number?: string;
 
     action_event_name?: string;
     action_html_url?: string;
