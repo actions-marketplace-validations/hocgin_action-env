@@ -21,6 +21,8 @@ outputs:
     description: '标签: v1.0.0'
   version:
     description: '版本: v1.0.0'
+  versionNumber:
+    description: '版本号: 1.0.0'
   action_event_name:
     description: '触发事件: schedule/'
   action_html_url:
