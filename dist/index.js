@@ -66,12 +66,12 @@ function run(input) {
     if (context.eventName === 'pull_request') {
         const payload = context.payload;
         let pullRequest = payload.pull_request;
-        targetBranchName = pullRequest.base.ref;
-        sourceSimpleName = pullRequest.head.ref;
+        targetBranchName = getSimpleName(pullRequest.base.ref);
+        sourceSimpleName = getSimpleName(pullRequest.head.ref);
     }
     if (context.eventName === 'push') {
         const payload = context.payload;
-        targetBranchName = payload.ref;
+        targetBranchName = getSimpleName(payload.ref);
     }
     if (context.eventName === 'workflow_run') {
         const payload = context.payload;

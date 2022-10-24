@@ -56,7 +56,6 @@ export function run(input: Inputs): Outputs {
 
         commit_body = `${workflowRun?.head_commit?.message}`;
         sourceSimpleName = workflowRun?.head_branch;
-        targetBranchName = workflowRun?.head_branch;
     }
 
     if (['develop'].includes(targetBranchName) || /^develop-.*/.test(targetBranchName)) {
