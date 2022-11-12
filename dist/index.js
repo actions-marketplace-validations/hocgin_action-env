@@ -98,9 +98,9 @@ function run(input) {
     else if (sourceSimpleName && /^v\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(sourceSimpleName)) {
         version = sourceSimpleName;
     }
-    let versionNumber;
+    let version_number;
     if (`${version}`.startsWith('v')) {
-        versionNumber = `${version}`.substring(1);
+        version_number = `${version}`.substring(1);
     }
     return {
         env,
@@ -108,7 +108,7 @@ function run(input) {
         source_branch: sourceSimpleName,
         tag: tagName,
         version,
-        versionNumber,
+        version_number,
         // === 触发信息 ===
         action_html_url,
         action_event_name: eventName,
